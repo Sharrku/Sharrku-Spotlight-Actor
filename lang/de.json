@@ -1,0 +1,10 @@
+{
+  "spotlight-portraits.ContextShowPortrait": "Porträt anzeigen",
+  "spotlight-portraits.HeaderButton": "Spotlight",
+  "spotlight-portraits.ControlsTitle": "Spotlight-Porträts",
+  "spotlight-portraits.ToolShowSelected": "Porträt des ausgewählten Tokens anzeigen",
+  "spotlight-portraits.ToolHideOverlay": "Porträt-Overlay ausblenden",
+  "spotlight-portraits.NoActor": "Es konnte kein Actor gefunden werden.",
+  "spotlight-portraits.NoTokenSelected": "Bitte zuerst einen Token auswählen.",
+  "spotlight-portraits.UnknownActor": "Unbekannter Actor"
+}

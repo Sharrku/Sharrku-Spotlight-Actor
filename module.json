@@ -1,0 +1,42 @@
+{
+  "id": "spotlight-portraits",
+  "title": "Spotlight Portraits",
+  "description": "Bring NPC and player artwork to the foreground with a full-screen portrait overlay.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.360",
+    "maximum": "14"
+  },
+  "authors": [
+    {
+      "name": "OpenAI"
+    }
+  ],
+  "socket": true,
+  "esmodules": [
+    "scripts/module.js"
+  ],
+  "styles": [
+    "styles/module.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    }
+  ],
+  "relationships": {
+    "systems": []
+  },
+  "url": "",
+  "manifest": "",
+  "download": "",
+  "license": "LICENSE"
+}
