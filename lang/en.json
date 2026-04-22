@@ -1,10 +1,13 @@
 {
-  "spotlight-portraits.ContextShowPortrait": "Show portrait",
-  "spotlight-portraits.HeaderButton": "Spotlight",
-  "spotlight-portraits.ControlsTitle": "Spotlight Portraits",
-  "spotlight-portraits.ToolShowSelected": "Show selected token portrait",
-  "spotlight-portraits.ToolHideOverlay": "Hide portrait overlay",
-  "spotlight-portraits.NoActor": "No actor could be found.",
-  "spotlight-portraits.NoTokenSelected": "Please select a token first.",
-  "spotlight-portraits.UnknownActor": "Unknown Actor"
+  "sharrku-spotlight-actor.UnknownActor": "Unknown Actor",
+  "sharrku-spotlight-actor.NoActor": "No actor found.",
+  "sharrku-spotlight-actor.NoTokenSelected": "Please select a token first.",
+  "sharrku-spotlight-actor.ContextShowPortraitRight": "Show Portrait (Right)",
+  "sharrku-spotlight-actor.ContextShowPortraitLeft": "Show Portrait (Left)",
+  "sharrku-spotlight-actor.HeaderButtonRight": "Spotlight Right",
+  "sharrku-spotlight-actor.HeaderButtonLeft": "Spotlight Left",
+  "sharrku-spotlight-actor.ControlsTitle": "Portrait Spotlight",
+  "sharrku-spotlight-actor.ToolShowSelectedRight": "Show selected token portrait from right",
+  "sharrku-spotlight-actor.ToolShowSelectedLeft": "Show selected token portrait from left",
+  "sharrku-spotlight-actor.ToolHideOverlay": "Hide portrait spotlight"
 }

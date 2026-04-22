@@ -1,42 +1,21 @@
 {
-  "id": "spotlight-portraits",
-  "title": "Spotlight Portraits",
-  "description": "Bring NPC and player artwork to the foreground with a full-screen portrait overlay.",
-  "version": "1.0.0",
+  "id": "sharrku-spotlight-actor",
+  "title": "Actor Portrait Spotlight (Sharrku)",
+  "description": "Quickly display actor and player portraits as a fullscreen spotlight overlay for all players.",
+  "version": "1.1.0",
+  "authors": [
+    { "name": "Sharrku" }
+  ],
   "compatibility": {
     "minimum": "14",
-    "verified": "14.360",
-    "maximum": "14"
+    "verified": "14.360"
   },
-  "authors": [
-    {
-      "name": "OpenAI"
-    }
-  ],
-  "socket": true,
-  "esmodules": [
+  "scripts": [
     "scripts/module.js"
   ],
   "styles": [
     "styles/module.css"
   ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
-    },
-    {
-      "lang": "de",
-      "name": "Deutsch",
-      "path": "lang/de.json"
-    }
-  ],
-  "relationships": {
-    "systems": []
-  },
-  "url": "",
-  "manifest": "",
-  "download": "",
-  "license": "LICENSE"
+  "manifest": "https://raw.githubusercontent.com/Sharrku/Sharrku-Spotlight-Actor/main/module.json",
+  "download": "https://github.com/Sharrku/Sharrku-Spotlight-Actor/releases/download/v1.1.0/Sharrku-Spotlight-Actor-v1.1.0.zip"
 }

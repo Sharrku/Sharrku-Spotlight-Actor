@@ -1,8 +1,8 @@
-const MODULE_ID = "spotlight-portraits";
+const MODULE_ID = "sharrku-spotlight-actor";
 const SOCKET_EVENT = `module.${MODULE_ID}`;
 const OVERLAY_ID = `${MODULE_ID}-overlay`;
 
-class SpotlightPortraits {
+class SharrkuSpotlightActor {
   static init() {
     game.socket.on(SOCKET_EVENT, (payload) => this._onSocketMessage(payload));
 
@@ -28,17 +28,14 @@ class SpotlightPortraits {
   }
 
   static buildPayload(actor, options = {}) {
-    const image = options.image || this.getActorImage(actor);
-    const name = options.name ?? actor?.name ?? game.i18n.localize(`${MODULE_ID}.UnknownActor`);
-
     return {
       action: "show",
       actorId: actor?.id ?? null,
-      image,
-      name,
+      image: options.image || this.getActorImage(actor),
+      name: options.name ?? actor?.name ?? game.i18n.localize(`${MODULE_ID}.UnknownActor`),
       subtitle: options.subtitle ?? "",
       showName: options.showName ?? true,
-      showTo: options.showTo ?? "all",
+      side: options.side === "left" ? "left" : "right",
       timestamp: Date.now()
     };
   }
@@ -54,13 +51,13 @@ class SpotlightPortraits {
     this._onSocketMessage(payload);
   }
 
-  static showForSelectedToken() {
+  static showForSelectedToken(options = {}) {
     const actor = this.getSelectedActor();
     if (!actor) {
       ui.notifications?.warn(game.i18n.localize(`${MODULE_ID}.NoTokenSelected`));
       return;
     }
-    this.showForActor(actor);
+    this.showForActor(actor, options);
   }
 
   static hide() {
@@ -75,74 +72,96 @@ class SpotlightPortraits {
     if (payload.action === "hide") this.removeOverlay();
   }
 
-  static renderOverlay({ image, name, subtitle = "", showName = true }) {
+  static renderOverlay({ image, name, subtitle = "", showName = true, side = "right" }) {
     this.removeOverlay();
+
+    const safeName = foundry.utils.escapeHTML(showName ? name : "Portrait");
+    const safeSubtitle = subtitle ? foundry.utils.escapeHTML(subtitle) : "";
 
     const overlay = document.createElement("div");
     overlay.id = OVERLAY_ID;
-    overlay.classList.add(MODULE_ID);
+    overlay.classList.add(MODULE_ID, `is-${side}`);
     overlay.innerHTML = `
-      <div class="sp-backdrop"></div>
-      <div class="sp-stage">
-        <button type="button" class="sp-close" aria-label="Close">×</button>
-        <div class="sp-card">
-          <img class="sp-image" src="${image}" alt="${showName ? foundry.utils.escapeHTML(name) : "Portrait"}">
+      <div class="ssa-backdrop"></div>
+      <div class="ssa-stage">
+        <button type="button" class="ssa-close" aria-label="Close">×</button>
+        <div class="ssa-panel">
+          <div class="ssa-image-wrap">
+            <img class="ssa-image" src="${image}" alt="${safeName}">
+          </div>
           ${showName ? `
-            <div class="sp-caption">
-              <div class="sp-name">${foundry.utils.escapeHTML(name)}</div>
-              ${subtitle ? `<div class="sp-subtitle">${foundry.utils.escapeHTML(subtitle)}</div>` : ""}
+            <div class="ssa-caption">
+              <div class="ssa-name">${safeName}</div>
+              ${safeSubtitle ? `<div class="ssa-subtitle">${safeSubtitle}</div>` : ""}
             </div>
           ` : ""}
         </div>
       </div>
     `;
 
-    overlay.querySelector(".sp-backdrop")?.addEventListener("click", () => this.hide());
-    overlay.querySelector(".sp-close")?.addEventListener("click", () => this.hide());
+    overlay.querySelector(".ssa-backdrop")?.addEventListener("click", () => this.hide());
+    overlay.querySelector(".ssa-close")?.addEventListener("click", () => this.hide());
     overlay.addEventListener("contextmenu", (event) => {
       event.preventDefault();
       this.hide();
     });
 
     document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add("is-visible"));
   }
 
   static removeOverlay() {
-    document.getElementById(OVERLAY_ID)?.remove();
+    const existing = document.getElementById(OVERLAY_ID);
+    if (!existing) return;
+    existing.remove();
   }
 }
 
 Hooks.once("init", () => {
-  SpotlightPortraits.init();
+  SharrkuSpotlightActor.init();
 
   game.modules.get(MODULE_ID).api = {
-    showForActor: (actor, options = {}) => SpotlightPortraits.showForActor(actor, options),
-    showForSelectedToken: () => SpotlightPortraits.showForSelectedToken(),
-    hide: () => SpotlightPortraits.hide()
+    showForActor: (actor, options = {}) => SharrkuSpotlightActor.showForActor(actor, options),
+    showForSelectedToken: (options = {}) => SharrkuSpotlightActor.showForSelectedToken(options),
+    hide: () => SharrkuSpotlightActor.hide()
   };
 });
 
 Hooks.on("getActorDirectoryEntryContext", (_html, contextOptions) => {
   contextOptions.push({
-    name: game.i18n.localize(`${MODULE_ID}.ContextShowPortrait`),
-    icon: '<i class="fas fa-image"></i>',
-    condition: (li) => {
-      const actor = game.actors?.get(li?.data("entryId"));
-      return !!actor;
-    },
+    name: game.i18n.localize(`${MODULE_ID}.ContextShowPortraitRight`),
+    icon: '<i class="fas fa-images"></i>',
+    condition: (li) => !!game.actors?.get(li?.data("entryId")),
     callback: (li) => {
       const actor = game.actors?.get(li?.data("entryId"));
-      SpotlightPortraits.showForActor(actor);
+      SharrkuSpotlightActor.showForActor(actor, { side: "right" });
+    }
+  });
+
+  contextOptions.push({
+    name: game.i18n.localize(`${MODULE_ID}.ContextShowPortraitLeft`),
+    icon: '<i class="fas fa-images"></i>',
+    condition: (li) => !!game.actors?.get(li?.data("entryId")),
+    callback: (li) => {
+      const actor = game.actors?.get(li?.data("entryId"));
+      SharrkuSpotlightActor.showForActor(actor, { side: "left" });
     }
   });
 });
 
 Hooks.on("getActorSheetHeaderButtons", (sheet, buttons) => {
   buttons.unshift({
-    label: game.i18n.localize(`${MODULE_ID}.HeaderButton`),
-    class: "spotlight-portraits-show",
-    icon: "fas fa-image-portrait",
-    onclick: () => SpotlightPortraits.showForActor(sheet.actor)
+    label: game.i18n.localize(`${MODULE_ID}.HeaderButtonRight`),
+    class: "sharrku-spotlight-actor-show-right",
+    icon: "fas fa-right-long",
+    onclick: () => SharrkuSpotlightActor.showForActor(sheet.actor, { side: "right" })
+  });
+
+  buttons.unshift({
+    label: game.i18n.localize(`${MODULE_ID}.HeaderButtonLeft`),
+    class: "sharrku-spotlight-actor-show-left",
+    icon: "fas fa-left-long",
+    onclick: () => SharrkuSpotlightActor.showForActor(sheet.actor, { side: "left" })
   });
 });
 
@@ -150,22 +169,29 @@ Hooks.on("getSceneControlButtons", (controls) => {
   controls.push({
     name: MODULE_ID,
     title: game.i18n.localize(`${MODULE_ID}.ControlsTitle`),
-    icon: "fas fa-image",
+    icon: "fas fa-images",
     layer: "tokens",
     tools: [
       {
-        name: "show-selected",
-        title: game.i18n.localize(`${MODULE_ID}.ToolShowSelected`),
-        icon: "fas fa-user-large",
+        name: "show-selected-right",
+        title: game.i18n.localize(`${MODULE_ID}.ToolShowSelectedRight`),
+        icon: "fas fa-right-long",
         button: true,
-        onClick: () => SpotlightPortraits.showForSelectedToken()
+        onClick: () => SharrkuSpotlightActor.showForSelectedToken({ side: "right" })
+      },
+      {
+        name: "show-selected-left",
+        title: game.i18n.localize(`${MODULE_ID}.ToolShowSelectedLeft`),
+        icon: "fas fa-left-long",
+        button: true,
+        onClick: () => SharrkuSpotlightActor.showForSelectedToken({ side: "left" })
       },
       {
         name: "hide-overlay",
         title: game.i18n.localize(`${MODULE_ID}.ToolHideOverlay`),
         icon: "fas fa-eye-slash",
         button: true,
-        onClick: () => SpotlightPortraits.hide()
+        onClick: () => SharrkuSpotlightActor.hide()
       }
     ]
   });
